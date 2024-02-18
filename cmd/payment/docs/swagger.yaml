@@ -1,0 +1,702 @@
+basePath: /
+definitions:
+  model.CreateTransactionRequest:
+    properties:
+      amount:
+        type: number
+      currency:
+        type: string
+      customer_id:
+        type: integer
+      hash_credit_card:
+        type: string
+      merchant_id:
+        type: integer
+    type: object
+  model.Customer:
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      hash_credit_card:
+        type: string
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Merchant:
+    properties:
+      amount_account:
+        type: number
+      authentication_key:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Transaction:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      currency:
+        type: string
+      customer_id:
+        type: integer
+      hash_credit_card:
+        type: string
+      id:
+        type: integer
+      merchant_id:
+        type: integer
+      state:
+        type: string
+      token:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.TransactionUpdateDTO:
+    properties:
+      amount:
+        description: omitempty permite que el campo sea opcional
+        type: number
+      currency:
+        type: string
+      state:
+        type: string
+    type: object
+  model.User:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  model.createUserDTO:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  model.loginCredentialsDTO:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API para el manejo de pagos
+  title: API de Pagos
+  version: "1"
+paths:
+  /api/customer:
+    post:
+      consumes:
+      - application/json
+      description: Agrega un nuevo customer a la base de datos con la información
+        proporcionada en el cuerpo de la solicitud.
+      parameters:
+      - description: Información del customer
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/model.Customer'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Customer creado exitosamente
+          schema:
+            $ref: '#/definitions/model.Customer'
+        "400":
+          description: Error al procesar los datos de entrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Error interno del servidor al crear el customer
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Crea un nuevo customer
+      tags:
+      - customer
+  /api/customer/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Elimina un customer por su ID
+      parameters:
+      - description: ID del Customer
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Customer eliminado exitosamente
+        "404":
+          description: Customer no encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Error interno del servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Elimina un customer
+      tags:
+      - customer
+    get:
+      consumes:
+      - application/json
+      description: Obtiene un customer por su ID
+      parameters:
+      - description: ID del Customer
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Customer encontrado
+          schema:
+            $ref: '#/definitions/model.Customer'
+        "404":
+          description: Customer no encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Obtiene un customer
+      tags:
+      - customer
+    put:
+      consumes:
+      - application/json
+      description: Actualiza la información de un customer existente por su ID
+      parameters:
+      - description: ID del Customer
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Información actualizada del Customer
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/model.Customer'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Customer actualizado
+          schema:
+            $ref: '#/definitions/model.Customer'
+        "400":
+          description: Entrada inválida
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Customer no encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Actualiza un customer
+      tags:
+      - customer
+  /api/merchant:
+    post:
+      consumes:
+      - application/json
+      description: Agrega un nuevo merchant a la base de datos
+      parameters:
+      - description: Información del merchant
+        in: body
+        name: merchant
+        required: true
+        schema:
+          $ref: '#/definitions/model.Merchant'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Merchant creado
+          schema:
+            $ref: '#/definitions/model.Merchant'
+        "400":
+          description: Entrada inválida
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Error interno del servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Crea un nuevo merchant
+      tags:
+      - merchant
+  /api/merchant/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Elimina un merchant por su ID
+      parameters:
+      - description: ID del Merchant
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Merchant eliminado exitosamente
+        "404":
+          description: Merchant no encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Elimina un merchant
+      tags:
+      - merchant
+    get:
+      consumes:
+      - application/json
+      description: Obtiene un merchant por su ID
+      parameters:
+      - description: ID del Merchant
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Merchant'
+        "404":
+          description: Merchant no encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Obtiene un merchant
+      tags:
+      - merchant
+    put:
+      consumes:
+      - application/json
+      description: Actualiza la información de un merchant existente por su ID
+      parameters:
+      - description: ID del Merchant
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Información actualizada del Merchant
+        in: body
+        name: merchant
+        required: true
+        schema:
+          $ref: '#/definitions/model.Merchant'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Merchant'
+        "400":
+          description: Entrada inválida
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Merchant no encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Actualiza un merchant
+      tags:
+      - merchant
+  /api/transaction:
+    post:
+      consumes:
+      - application/json
+      description: Crea una nueva transacción con los datos proporcionados
+      parameters:
+      - description: Datos de la Transacción
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateTransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Transaction'
+      security:
+      - ApiKeyAuth: []
+      summary: Crea una nueva transacción
+      tags:
+      - transaction
+  /api/transaction/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Obtiene una transaccion por su ID
+      parameters:
+      - description: ID del Transaction
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transaccion encontrada
+          schema:
+            $ref: '#/definitions/model.Transaction'
+        "404":
+          description: Transaccion no encontrada
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Obtiene una transacción
+      tags:
+      - transaction
+    put:
+      consumes:
+      - application/json
+      description: Actualiza una transacción existente; solo se permite si el estado
+        es "pending"
+      parameters:
+      - description: ID de la Transacción
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Datos de la Transacción a actualizar
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/model.TransactionUpdateDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transacción actualizada
+        "400":
+          description: Entrada inválida
+        "404":
+          description: Transacción no encontrada
+      security:
+      - ApiKeyAuth: []
+      summary: Actualiza una transacción
+      tags:
+      - transaction
+  /api/transaction/process:
+    post:
+      consumes:
+      - application/json
+      description: Procesa una transacción dada, capturándola o reembolsándola basado
+        en el tipo de transacción especificado.
+      parameters:
+      - description: Token de la transacción
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: Tipo de transacción (capture, refund)
+        in: query
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transacción procesada
+          schema:
+            $ref: '#/definitions/model.Transaction'
+        "400":
+          description: Error de solicitud - Transacción ya procesada, tipo de transacción
+            inválido, tarjeta de crédito inválida, etc.
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Transacción no encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Error interno del servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Procesa una transacción
+      tags:
+      - transaction
+  /api/transaction/token/{token}:
+    get:
+      consumes:
+      - application/json
+      description: Obtiene una transacción por su token único
+      parameters:
+      - description: Token de la Transacción
+        in: path
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Transaction'
+        "404":
+          description: Transaction not found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Obtiene una transacción por token
+      tags:
+      - transaction
+  /api/user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Elimina un usuario por su ID.
+      parameters:
+      - description: ID del Usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Usuario eliminado correctamente
+        "404":
+          description: Usuario no encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Elimina un usuario
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Obtiene un usuario por su ID, excluyendo la contraseña en la respuesta.
+      parameters:
+      - description: ID del Usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Usuario encontrado
+          schema:
+            $ref: '#/definitions/model.User'
+        "401":
+          description: No autorizado
+          schema:
+            type: string
+        "404":
+          description: Usuario no encontrado
+          schema:
+            type: string
+        "500":
+          description: Error al obtener el usuario
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Obtiene un usuario
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Actualiza la información de un usuario existente por su ID.
+      parameters:
+      - description: ID del Usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Información actualizada del Usuario
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Error en la solicitud
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Usuario no encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Actualiza un usuario
+      tags:
+      - user
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Autentica a un usuario basado en `username` y `password` y genera
+        un JWT.
+      parameters:
+      - description: Credenciales de inicio de sesión
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/model.loginCredentialsDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token generado exitosamente
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Credenciales inválidas
+          schema:
+            type: string
+        "401":
+          description: Usuario no encontrado o contraseña incorrecta
+          schema:
+            type: string
+      summary: Inicia sesión de usuario
+      tags:
+      - auth
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: Crea un nuevo usuario con username y password proporcionados.
+      parameters:
+      - description: Credenciales de usuario
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/model.createUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Usuario creado con ID y username
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Error al decodificar solicitud o usuario/password faltantes
+          schema:
+            type: string
+        "409":
+          description: Nombre de usuario ya existe
+          schema:
+            type: string
+        "500":
+          description: Error al hashear la contraseña / Error al crear el usuario
+          schema:
+            type: string
+      summary: Crea un nuevo usuario
+      tags:
+      - user
+swagger: "2.0"
