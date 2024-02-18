@@ -1,6 +1,7 @@
 # API de Pagos
 
 La API de Pagos es un sistema diseñado para manejar transacciones online, permitiendo a los comerciantes procesar pagos, consultar detalles de pagos anteriores y gestionar reembolsos.
+![alt text](https://github.com/davidgg090/paymentApiGO/blob/main/img/payment.png?raw=true)
 
 ## Comenzando
 
