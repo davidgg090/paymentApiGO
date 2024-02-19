@@ -22,7 +22,7 @@ Un paso a paso que te guiará sobre cómo poner en marcha un entorno de desarrol
 1. Clona el repositorio en tu máquina local:
 
 ```bash
-git clone https://github.com/davidgg090/tuProyecto.git
+git clone https://github.com/davidgg090/paymentApiGO.git
 ```
 
 2. Accede al directorio del proyecto:
